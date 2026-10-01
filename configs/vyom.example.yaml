@@ -1,0 +1,72 @@
+# Vyom example configuration
+# Copy to vyom.yaml and adjust. All values can be overridden by environment variables
+# (see env: tags in internal/config/config.go).
+
+database:
+  path: "vyom.db"              # VYOM_DB_PATH
+
+logging:
+  level: "info"                # VYOM_LOG_LEVEL (debug, info, warn, error)
+  format: "json"               # VYOM_LOG_FORMAT (json, text)
+  service: "vyom"
+  component: "cli"
+
+server:
+  host: "127.0.0.1"            # VYOM_SERVER_HOST
+  port: 8080                   # VYOM_SERVER_PORT
+  read_timeout: "15s"
+  write_timeout: "15s"
+  idle_timeout: "60s"
+
+providers:
+  cdn:
+    id: ""                     # VYOM_CDN_PROVIDER_ID (references providers table)
+  storage:
+    id: ""                     # VYOM_STORAGE_PROVIDER_ID
+
+scan:
+  days_back: 30                # VYOM_SCAN_DAYS_BACK
+  timezone: "UTC"              # VYOM_SCAN_TIMEZONE (IANA tz name)
+
+policy:
+  name: "default"              # VYOM_POLICY_NAME
+
+pricing:
+  currency: "USD"
+  bandwidth_per_gb: 0.04       # $0.04/GB, decimal GB (10^9 bytes)
+  storage_per_gb_month: 0.02
+  per_request: 0.0000004
+
+optimization:
+  dry_run: true                # VYOM_DRY_RUN (default true; --apply overrides)
+  concurrency: 2               # VYOM_OPT_CONCURRENCY
+  temp_dir: ""                 # VYOM_TEMP_DIR (empty = OS temp)
+
+# Provider configurations are stored in the database, not in this file.
+# Use `vyom provider add` to create them. Secrets are NEVER stored here;
+# only environment variable names that hold the secrets.
+# Example provider configs:
+#
+# providers:
+#   - id: "prv_akamai_prod"
+#     kind: "cdn"
+#     type: "akamai"
+#     name: "akamai-prod"
+#     enabled: true
+#     options:
+#       host: "akab-xxxxx.luna.akamaiapis.net"
+#     credentials:
+#       client_token_env: "VYOM_AKAMAI_CLIENT_TOKEN"
+#       client_secret_env: "VYOM_AKAMAI_CLIENT_SECRET"
+#       access_token_env: "VYOM_AKAMAI_ACCESS_TOKEN"
+#
+#   - id: "prv_azure_blob_prod"
+#     kind: "storage"
+#     type: "azure_blob"
+#     name: "azure-blob-prod"
+#     enabled: true
+#     options:
+#       account: "myaccount"
+#       container: "media"
+#     credentials:
+#       account_key_env: "VYOM_AZURE_ACCOUNT_KEY"
